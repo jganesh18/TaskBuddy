@@ -1,25 +1,55 @@
-import React, { useState } from 'react'
+import { useState,useEffect } from 'react';
 import Taskform from './Components/Taskform'
 import Tasklist from './Components/Tasklist'
-
 import Progresstracker from './Components/Progresstracker'
+import './Style.css'
+
 
 export default function App() {
-  const[tasks,setTasks] =useState([]);
-   
-  const addTask = (task) => {
-    setTasks(task);
-  } 
-  return (  
-    <div>  
+  const [tasks, setTasks] = useState([]);
+
+
+  useEffect(()=>{
+    localStorage.setItem("tasks",JSON.stringify(tasks));
+  });
+
+
+  const addTask = (task)=>{
+    setTasks([...tasks, task])
+  }
+
+
+  const updateTask = (updatedTask, index) => {
+    const newtask = [...tasks];
+    newtask[index] = updatedTask;
+    setTasks(newtask);
+  }
+  const deleteTask = (index) => {
+    setTasks(tasks.filter((_, i) => i != index ))
+  }
+
+
+  const clearTasks = () => {
+    setTasks([]);
+  }
+  return (
+    <div>
       <header>
-        <h1>TaskBuddy</h1>
-        <p><i>Your froendly task Manager</i></p>
+        <h1>TaskMan</h1>
+        <p><i>Your friendly Task Manager</i></p>
       </header>
+
+
       <Taskform addTask = {addTask}/>
-      <Tasklist/>
-      <Progresstracker/>
-      <button>Clear All Tasks</button>
+      <Tasklist tasks = {tasks}
+       updateTask = {updateTask} 
+       deleteTask = {deleteTask}/>
+      <Progresstracker tasks = {tasks}/>
+
+
+      {tasks.length>0 && (<button className='clear-btn'
+      onClick={clearTasks}>clear All Tasks</button>)}
+      
     </div>
   )
 }
